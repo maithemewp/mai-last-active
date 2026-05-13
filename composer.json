@@ -1,0 +1,29 @@
+{
+    "name": "bizbudding/mai-last-active",
+    "description": "Last-active tracking for WordPress users, with a sortable admin column.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.2",
+        "yahnis-elsts/plugin-update-checker": "^5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": { "Mai\\LastActive\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Mai\\LastActive\\Tests\\": "tests/" }
+    },
+    "scripts": {
+        "test": "@php -d auto_prepend_file=tests/abspath-shim.php vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "allow-plugins": {}
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
