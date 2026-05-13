@@ -4,17 +4,15 @@
 .phpunit.result.cache
 /.phpunit.cache/
 
-# vendor/ is committed so GitHub-installed copies work without composer.
-# Run `composer install --no-dev --optimize-autoloader` before committing
-# vendor updates. Dev-only deps (phpunit etc.) stay out of the tree.
-/vendor/bin/phpunit
-/vendor/bin/php-parse
-/vendor/myclabs/
-/vendor/nikic/
-/vendor/phar-io/
-/vendor/phpunit/
-/vendor/sebastian/
-/vendor/theseer/
-# Auto-regenerates on every `composer install` with the current git ref,
-# so tracking it would dirty the tree after every commit.
+# vendor/ is committed (prod-only) so GitHub-installed zips work
+# without `composer install`. Allowlist approach: everything in vendor
+# is ignored except the autoloader, composer's own files, and each
+# explicitly-named production package. New dev deps are auto-ignored.
+# When adding a NEW prod dep, add a matching `!/vendor/<vendor>/` line.
+/vendor/*
+!/vendor/autoload.php
+!/vendor/composer/
+!/vendor/yahnis-elsts/
+# Auto-regenerates with the current git ref, so tracking it dirties
+# the tree after every commit.
 /vendor/composer/installed.php
