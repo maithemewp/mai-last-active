@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Mai\LastActive;
 
 final class ActivityRecorder {
+	private bool $ran = false;
+
 	public function __construct( private readonly int $throttle ) {}
 
 	public function register(): void {
@@ -16,9 +18,9 @@ final class ActivityRecorder {
 	}
 
 	private function on_shutdown(): void {
-		static $ran = false;
-		if ( $ran ) return;
-		$ran = true;
+		// Instance flag — `shutdown` should be a one-shot per request.
+		if ( $this->ran ) return;
+		$this->ran = true;
 
 		if ( ! is_user_logged_in() )         return;
 		if ( wp_doing_cron() )               return;
