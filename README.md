@@ -9,7 +9,7 @@ WordPress has no built-in "last login" or "last active" record per user. Existin
 - On `wp_login`, writes the current Unix timestamp to user meta `mai_last_active`.
 - On `shutdown`, while a user is logged in, writes the timestamp again — but throttled (default: at most once every 4 hours per user). This catches users who stay logged in for long stretches and keep visiting.
 - Adds a sortable "Last Active" column on the Users admin screen, hideable via Screen Options.
-- On activation, seeds existing users from their `session_tokens` meta so the column has data on day one for anyone with a live session.
+- On activation, seeds existing users from their `session_tokens` meta so the column has data on day one. See the FAQ for why this can produce timestamps from years ago.
 
 ## What it does NOT do
 
@@ -74,6 +74,9 @@ Yes — same reason. If you'd rather it not, gate it with the `mai_last_active_s
 
 **Multisite?**
 User meta is global in WordPress multisite. The value reflects last activity on **any** site in the network, not per-site. Acceptable for most use cases; not configurable in this version.
+
+**Why does the backfill produce timestamps for users whose sessions should have expired long ago?**
+The backfill reads the `login` value from each user's `session_tokens` usermeta and takes the max. WordPress doesn't proactively garbage-collect expired tokens — they're only pruned lazily when the user logs in again, logs out, or an admin force-logs-them-out. So a user who logged in years ago and never came back still has their old token sitting in `wp_usermeta`, and the backfill will read it. The timestamp is real (they did log in then); it just doesn't mean they have an active session now. Treat the seeded value as "last known login," not "currently active."
 
 **How is this different from WooCommerce's `wc_last_active`?**
 `wc_last_active` is set by WC core on any logged-in front-end request at daily precision (midnight UTC), and only when WC is installed. `mai_last_active` is set on real login events plus throttled activity, at the precision you configure, on any WordPress site.
